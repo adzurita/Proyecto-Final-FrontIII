@@ -1,48 +1,32 @@
-import React, { useContext } from 'react';
-import { FavsContext } from '../context/FavsContext';
-import NavigationButtons from '../components/NavigationButtons';
+import React, { createContext, useReducer } from 'react';
 
-const Favs = () => {
-  const { favs, dispatch } = useContext(FavsContext);
+// Crear el contexto
+export const FavsContext = createContext();
 
-  const removeFromFavorites = (book) => {
-    dispatch({ type: 'REMOVE_FAV', payload: book });
-  };
-
-  return (
-    <div className="page-content">
-      <h1>Libros Favoritos</h1>
-      {favs.length === 0 ? (
-        <p style={{ textAlign: 'center' }}>No tienes libros favoritos aún.</p>
-      ) : (
-        <div className="card-container">
-          {favs.map((book) => (
-            <div key={book.key} className="card">
-              <img
-                src={`https://covers.openlibrary.org/b/id/${book.cover_id}-M.jpg`}
-                alt={book.title}
-              />
-              <h3>{book.title}</h3>
-              <button
-                onClick={() => removeFromFavorites(book)}
-                style={{
-                  padding: '0.5rem 1rem',
-                  backgroundColor: '#ff4d4d',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '5px',
-                  cursor: 'pointer',
-                  marginTop: '1rem',
-                }}
-              >
-                Eliminar de Favoritos
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
+// Estado inicial
+const initialState = {
+  favs: [],
 };
 
-export default Favs;
+// Reducer para manejar acciones
+const favsReducer = (state, action) => {
+  switch (action.type) {
+    case 'ADD_FAV':
+      return { ...state, favs: [...state.favs, action.payload] };
+    case 'REMOVE_FAV':
+      return { ...state, favs: state.favs.filter((book) => book.key !== action.payload.key) };
+    default:
+      return state;
+  }
+};
+
+// Proveedor del contexto
+export const FavsProvider = ({ children }) => {
+  const [state, dispatch] = useReducer(favsReducer, initialState);
+
+  return (
+    <FavsContext.Provider value={{ favs: state.favs, dispatch }}>
+      {children}
+    </FavsContext.Provider>
+  );
+};

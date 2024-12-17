@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { FavsProvider } from './context/FavsContext'; // Importar el proveedor
+import { FavsProvider } from './context/FavsContext';
 import Header from './components/Header';
 import Home from './pages/Home';
 import BookDetails from './pages/BookDetails';
